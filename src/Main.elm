@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html exposing (..)
 import Html.App as Html
@@ -10,11 +10,11 @@ import Time exposing (Time, second)
 import String
 
 
-main : Program Never
+main : Program (Maybe Model)
 main =
-    Html.program
+    Html.programWithFlags
         { init = init
-        , update = update
+        , update = (\msg model -> withSetStorage (update msg model))
         , subscriptions = subscriptions
         , view = view
         }
@@ -26,15 +26,19 @@ main =
 
 type alias Model =
     { day : Int
-    , date : Date
+    , date : Float
     , ausgabe : Float
     , sicherheit : Float
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( Model 0 (Date.fromTime 0) 0 0, Cmd.none )
+init : Maybe Model -> ( Model, Cmd Msg )
+init savedModel =
+    let
+        f =
+            Debug.log "flags" savedModel
+    in
+        Maybe.withDefault (Model 0 0 0 0) savedModel ! []
 
 
 
@@ -53,10 +57,12 @@ update action model =
         Tick newTime ->
             let
                 newDate =
-                    Date.fromTime newTime
+                    newTime
 
                 dayOfMonth =
-                    Date.day newDate
+                    newDate
+                        |> Date.fromTime
+                        |> Date.day
 
                 newModel =
                     { model
@@ -81,6 +87,22 @@ update action model =
                 ( { model | sicherheit = newSicherheitFloat }, Cmd.none )
 
 
+
+-- PORTS
+
+
+port setStorage : Model -> Cmd msg
+
+
+withSetStorage : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+withSetStorage ( model, cmds ) =
+    ( model, Cmd.batch [ setStorage model, cmds ] )
+
+
+
+-- SUBSCRIPTIONS
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Time.every Time.second Tick
@@ -93,11 +115,14 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let
+        date =
+            Date.fromTime model.date
+
         year =
-            Date.year model.date
+            Date.year date
 
         month =
-            Date.month model.date
+            Date.month date
 
         daysThisMonth =
             toFloat <| daysInMonth year month

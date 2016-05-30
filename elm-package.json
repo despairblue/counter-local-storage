@@ -1,16 +1,15 @@
 {
     "version": "1.0.0",
-    "summary": "helpful summary of your project, less than 80 characters",
-    "repository": "https://github.com/user/project.git",
-    "license": "BSD3",
+    "summary": "A counter example that stores it's model in local storage.",
+    "repository": "https://github.com/despairblue/counter-local-storage.git",
+    "license": "Apache-2.0",
     "source-directories": [
         "."
     ],
     "exposed-modules": [],
     "dependencies": {
         "elm-lang/core": "4.0.0 <= v < 5.0.0",
-        "elm-lang/html": "1.0.0 <= v < 2.0.0",
-        "rluiten/elm-date-extra": "6.0.0 <= v < 7.0.0"
+        "elm-lang/html": "1.0.0 <= v < 2.0.0"
     },
     "elm-version": "0.17.0 <= v < 0.18.0"
 }

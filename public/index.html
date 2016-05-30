@@ -3,19 +3,18 @@
 <head>
     <title>Elm!</title>
     <script src="built/index.js" charset="utf-8"></script>
-    <link rel="stylesheet" href="vendor/bootstrap.min.css">
     <link rel="stylesheet" href="main.css">
 </head>
 
 <body>
     <div id="app"></div>
     <script>
-        var storedState = localStorage.getItem('money')
-        var startingState = storedState ? JSON.parse(storedState) : null
-        var money = Elm.Main.embed(document.getElementById("app"), startingState)
+        const storedState = localStorage.getItem('model')
+        const startingState = storedState ? JSON.parse(storedState) : null
+        const elmApp = Elm.Main.fullscreen(startingState)
 
-        money.ports.setStorage.subscribe(function (state) {
-          localStorage.setItem('money', JSON.stringify(state))
+        elmApp.ports.setStorage.subscribe(function (state) {
+          localStorage.setItem('model', JSON.stringify(state))
         })
     </script>
 </body>
